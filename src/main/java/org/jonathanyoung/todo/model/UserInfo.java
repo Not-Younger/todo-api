@@ -15,6 +15,9 @@ public class UserInfo {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column
+    private String name;
+
     @Column(unique = true)
     private String email;
 

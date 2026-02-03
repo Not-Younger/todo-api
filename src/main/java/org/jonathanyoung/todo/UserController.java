@@ -44,6 +44,7 @@ public class UserController {
 
         final UserInfo newUser = new UserInfo(
                 null,
+                userInfo.getName(),
                 userInfo.getEmail(),
                 passwordEncoder.encode(userInfo.getPassword())
         );
