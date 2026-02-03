@@ -1,5 +1,6 @@
 package org.jonathanyoung.todo.security;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -17,8 +18,8 @@ public class JwtUtil {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
-    @Value("${jwt.expiration}")
-    private int jwtExpiration;
+    @Value("${jwt.expiration-ms}")
+    private long jwtExpirationMs;
 
     private SecretKey key;
 
@@ -31,7 +32,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + jwtExpiration))
+                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(this.key)
                 .compact();
     }
@@ -47,8 +48,10 @@ public class JwtUtil {
         try {
             Jwts.parser().verifyWith(this.key).build().parseSignedClaims(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException e) {
             log.error("JWT validation error: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("Token passed was not a JWT: {}", e.getMessage());
         }
         return false;
     }

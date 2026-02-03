@@ -7,8 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class UserDetailsModel implements UserDetails {
 
@@ -19,7 +17,9 @@ public class UserDetailsModel implements UserDetails {
     public UserDetailsModel(UserInfo userInfo) {
         this.username = userInfo.getEmail();
         this.password = userInfo.getPassword();
-        this.authorities = Stream.of(userInfo.getRoles().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        this.authorities = List.of(
+                new SimpleGrantedAuthority("ROLE_USER")
+        );
     }
 
     @Override

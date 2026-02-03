@@ -45,12 +45,11 @@ public class UserController {
         final UserInfo newUser = new UserInfo(
                 null,
                 userInfo.getEmail(),
-                passwordEncoder.encode(userInfo.getPassword()),
-                userInfo.getRoles()
+                passwordEncoder.encode(userInfo.getPassword())
         );
         userInfoRepository.save(newUser);
 
-        String jwt =  jwtUtil.generateToken(newUser.getEmail());
+        String jwt = jwtUtil.generateToken(newUser.getEmail());
 
         return ResponseEntity
                 .status(200)
@@ -69,6 +68,7 @@ public class UserController {
 
         final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String jwt = jwtUtil.generateToken(userDetails.getUsername());
+
         return ResponseEntity
                 .status(200)
                 .contentType(MediaType.APPLICATION_JSON)

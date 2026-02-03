@@ -20,7 +20,4 @@ public class UserInfo {
 
     @Column
     private String password;
-
-    @Column
-    private String roles;
 }

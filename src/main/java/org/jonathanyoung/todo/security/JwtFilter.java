@@ -9,7 +9,6 @@ import org.jonathanyoung.todo.service.UserDetailsServiceImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -31,15 +30,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("Entering JwtFilter");
         try {
           String jwt = parseJwt(request);
           if (jwt != null && jwtUtil.validateJwtToken(jwt)) {
               final String email = jwtUtil.getEmailFromToken(jwt);
               final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
               UsernamePasswordAuthenticationToken authenticationToken =
-                      new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-              authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                      new UsernamePasswordAuthenticationToken(
+                              userDetails,
+                              null,
+                              userDetails.getAuthorities()
+                      );
+
               SecurityContextHolder.getContext().setAuthentication(authenticationToken);
           }
         } catch (Exception e) {
