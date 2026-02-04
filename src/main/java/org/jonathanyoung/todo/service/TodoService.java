@@ -3,8 +3,10 @@ package org.jonathanyoung.todo.service;
 import lombok.extern.slf4j.Slf4j;
 import org.jonathanyoung.todo.model.Todo;
 import org.jonathanyoung.todo.model.UserInfo;
+import org.jonathanyoung.todo.repository.PageableTodoRepository;
 import org.jonathanyoung.todo.repository.TodoRepository;
 import org.jonathanyoung.todo.repository.UserInfoRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -18,16 +20,18 @@ public class TodoService {
 
     private final UserInfoRepository userInfoRepository;
     private final TodoRepository todoRepository;
+    private final PageableTodoRepository pageableTodoRepository;
 
-    public TodoService(UserInfoRepository userInfoRepository, TodoRepository todoRepository) {
+    public TodoService(UserInfoRepository userInfoRepository, TodoRepository todoRepository, PageableTodoRepository pageableTodoRepository) {
         this.userInfoRepository = userInfoRepository;
         this.todoRepository = todoRepository;
+        this.pageableTodoRepository = pageableTodoRepository;
     }
 
-    public List<Todo> getAllTodos(Authentication authentication) {
+    public List<Todo> getAllTodos(int page, int limit, Authentication authentication) {
         String email = getEmail(authentication);
         Optional<UserInfo> userInfo = userInfoRepository.findUserInfoByEmail(email);
-        return userInfo.map(todoRepository::findAllByUser).orElseGet(List::of);
+        return userInfo.map(user -> pageableTodoRepository.findAllByUser(user, PageRequest.of(page, limit))).orElseGet(List::of);
     }
 
     public Todo createTodo(Todo todo, Authentication authentication) {

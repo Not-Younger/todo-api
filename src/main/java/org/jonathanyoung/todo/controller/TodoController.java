@@ -1,5 +1,6 @@
 package org.jonathanyoung.todo.controller;
 
+import org.jonathanyoung.todo.model.PageResponse;
 import org.jonathanyoung.todo.model.Todo;
 import org.jonathanyoung.todo.service.TodoService;
 import org.springframework.http.MediaType;
@@ -20,11 +21,17 @@ public class TodoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Todo>> getAllTodos(Authentication authentication) {
+    public ResponseEntity<PageResponse> getAllTodos(@RequestParam int page, @RequestParam int limit, Authentication authentication) {
+        List<Todo> todos = todoService.getAllTodos(page, limit, authentication);
         return ResponseEntity
                 .status(200)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(todoService.getAllTodos(authentication));
+                .body(new PageResponse(
+                        todos,
+                        page,
+                        limit,
+                        todos.size()
+                ));
     }
 
     @PostMapping
