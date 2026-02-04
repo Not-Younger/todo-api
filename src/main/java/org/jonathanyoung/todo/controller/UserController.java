@@ -1,4 +1,4 @@
-package org.jonathanyoung.todo;
+package org.jonathanyoung.todo.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jonathanyoung.todo.model.UserInfo;
