@@ -4,6 +4,7 @@ import org.jonathanyoung.todo.model.Todo;
 import org.jonathanyoung.todo.service.TodoService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,16 +20,16 @@ public class TodoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Todo>> getAllTodos() {
+    public ResponseEntity<List<Todo>> getAllTodos(Authentication authentication) {
         return ResponseEntity
                 .status(200)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(todoService.getAllTodos());
+                .body(todoService.getAllTodos(authentication));
     }
 
     @PostMapping
-    public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
-        Todo newTodo = todoService.createTodo(todo);
+    public ResponseEntity<Todo> createTodo(@RequestBody Todo todo, Authentication authentication) {
+        Todo newTodo = todoService.createTodo(todo, authentication);
         return ResponseEntity
                 .status(201)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -36,9 +37,9 @@ public class TodoController {
      }
 
     @PostMapping("/{id}")
-    public ResponseEntity<Todo> updateTodo(@PathVariable String id, @RequestBody Todo todo) {
+    public ResponseEntity<Todo> updateTodo(@PathVariable String id, @RequestBody Todo todo, Authentication authentication) {
         todo.setId(id);
-        return todoService.updateTodo(todo).map(updateTodo ->
+        return todoService.updateTodo(todo, authentication).map(updateTodo ->
                 ResponseEntity
                         .status(200)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -47,8 +48,8 @@ public class TodoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable String id) {
-        todoService.deleteTodo(id);
+    public ResponseEntity<Void> deleteTodo(@PathVariable String id, Authentication authentication) {
+        todoService.deleteTodo(id, authentication);
         return ResponseEntity
                 .status(204)
                 .build();

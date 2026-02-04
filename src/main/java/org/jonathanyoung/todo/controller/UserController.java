@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 
 @Controller
 @Slf4j
@@ -46,7 +48,8 @@ public class UserController {
                 null,
                 userInfo.getName(),
                 userInfo.getEmail(),
-                passwordEncoder.encode(userInfo.getPassword())
+                passwordEncoder.encode(userInfo.getPassword()),
+                List.of()
         );
         userInfoRepository.save(newUser);
 

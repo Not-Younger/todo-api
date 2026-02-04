@@ -1,5 +1,6 @@
 package org.jonathanyoung.todo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,4 +23,8 @@ public class Todo {
 
     @Column
     private String description;
+
+    @ManyToOne
+    @JsonBackReference
+    private UserInfo user;
 }
